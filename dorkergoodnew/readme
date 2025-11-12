@@ -1,0 +1,253 @@
+# DorkPlus - Combined Tool (Test Directory)
+
+This is a unified version of DorkPlus that combines all functionality into a single, streamlined tool.
+
+## Features
+
+✅ **Google Dork Search**
+- Execute complex Google search queries
+- Support for all standard Google dork operators
+- Multi-credential rotation with API keys
+
+✅ **Content Capture**
+- Download and save webpage content (HTML, JSON, TXT)
+- Download and save PDF files
+- Automatic file type detection
+- Content size optimization
+
+✅ **Smart Content Extraction**
+- Automatic keyword matching from queries
+- Extracts first line containing matching keywords
+- Falls back to meaningful content if no match found
+- Handles various content types gracefully
+
+✅ **Results Management**
+- Save all results to organized text file
+- Detailed output with URLs, titles, snippets, and matching lines
+- Color-coded keyword highlighting in results
+
+✅ **Verbose Logging**
+- Real-time progress display
+- File size tracking for captured content
+- Detailed error reporting
+
+## Build
+
+```bash
+cd /workspaces/dorkerplus/test
+go mod download
+go build -o dorkerplus .
+```
+
+## Configuration
+
+Edit `config.yaml` with your Google API credentials:
+
+```yaml
+google:
+  - api_key: "YOUR_API_KEY"
+    search_engine_id: "YOUR_SEARCH_ENGINE_ID"
+  - api_key: "YOUR_API_KEY_2"
+    search_engine_id: "YOUR_SEARCH_ENGINE_ID_2"
+```
+
+### Getting Google API Credentials
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project
+3. Enable Custom Search API
+4. Create an API key
+5. Create a Custom Search Engine at [cse.google.com/cse/](https://cse.google.com/cse/)
+6. Get your Search Engine ID (cx parameter)
+7. Add credentials to `config.yaml`
+
+## Usage
+
+### Basic Usage
+
+```bash
+./dorkerplus -q "site:example.com ext:pdf" -o results.txt -screenshots ./content/
+```
+
+### Command-line Options
+
+```
+-q string
+    Google dork query (required)
+
+-o string
+    Output file to save results (default: "dorks.txt")
+
+-screenshots string
+    Directory to save captured content (optional)
+
+-max int
+    Maximum number of results (default: 10)
+
+-timeout int
+    Timeout in seconds for content capture (default: 10)
+
+-pdf
+    PDF mode: download PDFs only
+
+-quiet
+    Disable verbose output
+```
+
+### Examples
+
+1. **Search and capture content:**
+   ```bash
+   ./dorkerplus -q "site:example.com ext:pdf" \
+     -o results.txt \
+     -screenshots ./downloads/
+   ```
+
+2. **PDF mode only:**
+   ```bash
+   ./dorkerplus -q "site:company.com ext:pdf confidential" \
+     -o pdf_results.txt \
+     -screenshots ./pdfs/ \
+     -pdf
+   ```
+
+3. **High-volume search:**
+   ```bash
+   ./dorkerplus -q "inurl:admin intitle:login" \
+     -o admin_pages.txt \
+     -screenshots ./admin_content/ \
+     -max 20
+   ```
+
+4. **Quiet mode (for scripts):**
+   ```bash
+   ./dorkerplus -q "site:github.com password" -o results.txt -quiet
+   ```
+
+## Output Format
+
+### Results File
+
+```
+URL: https://example.com/page1.pdf
+Title: Example Page Title
+Snippet: Example page snippet from search results...
+Matching Line: This page contains confidential information about...
+────────────────────────────────────────────────────────────────────────────────
+
+URL: https://example.com/page2.html
+Title: Another Page
+Snippet: More search result information...
+Matching Line: Company data revealed in this document...
+────────────────────────────────────────────────────────────────────────────────
+```
+
+### Captured Content Directory
+
+```
+downloads/
+├── example_com_page1.pdf           (PDF file)
+├── example_com_page2.html          (HTML content)
+├── example_com_page3.json          (JSON content)
+└── ...
+```
+
+## How It Works
+
+### 1. Search Phase
+- Extracts keywords from your dork query
+- Uses Google Custom Search API to find URLs
+- Fetches content from each URL
+- Matches keywords against fetched content
+
+### 2. Content Capture Phase
+- Downloads and saves webpage HTML content
+- Downloads and saves PDF files
+- Auto-detects content type
+- Applies appropriate file extensions
+
+### 3. Results Phase
+- Organizes all data
+- Generates results file with highlights
+- Provides file size information
+
+## Supported Dork Operators
+
+- `site:` - Search within specific domain
+- `ext:` - Search for specific file types
+- `inurl:` - Search in URL path
+- `intitle:` - Search in page title
+- `intext:` - Search in page content
+- `filetype:` - Search for file types
+- `cache:` - View cached version
+- `link:` - Find pages linking to URL
+
+## Files Structure
+
+```
+test/
+├── main.go          # CLI and screenshot functionality
+├── config.go        # Configuration loading
+├── dorker.go        # Google Search API
+├── config.yaml      # Configuration file
+├── go.mod           # Dependencies
+├── README.md        # This file
+└── dorkerplus       # Compiled binary
+```
+
+## Key Functions
+
+- `Capture()` - Downloads webpage content
+- `CapturePDF()` - Downloads PDF files
+- `extractKeywords()` - Extracts keywords from query
+- `extractMatchingLine()` - Finds matching content
+- `saveResults()` - Saves results with highlights
+- `highlightKeywords()` - Colors keywords in output
+
+## Performance Notes
+
+- Content capture timeout: configurable (default 10s)
+- Maximum 10 results per search by default
+- Content limited to 10MB per file
+- Supports fast batch processing with `-quiet` flag
+
+## Security & Legal
+
+This tool is for:
+- ✅ Authorized security testing
+- ✅ Educational purposes
+- ✅ Bug bounty programs
+- ❌ Unauthorized access to systems
+- ❌ Malicious activity
+
+**Disclaimer:** Always obtain proper authorization before using this tool.
+
+## Differences from Original
+
+This version combines the separate `main.go` and `screenshotter.go` into a unified tool with:
+- Simplified content capture (no image processing)
+- Direct file downloads (PDFs, HTML, JSON)
+- Cleaner API integration
+- Single binary execution
+- Reduced dependencies
+
+## Troubleshooting
+
+### API Rate Limiting
+- Distribute searches across multiple API keys in config.yaml
+- Add delays between searches if needed
+
+### Content Capture Timeout
+- Increase timeout with `-timeout` flag
+- Ensure internet connection is stable
+
+### Missing Configuration
+- Ensure `config.yaml` exists in the same directory
+- Check API credentials are valid
+
+---
+
+**Version**: 1.0  
+**License**: MIT  
+**Author**: DorkPlus Contributors
+
