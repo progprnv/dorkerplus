@@ -1,3 +1,13 @@
+dorknewtool
+
+
+@progprnv ➜ /workspaces/dorkerplus/test (main) $ cd /workspaces/dorkerplus/test && rm -rf results && ./dorkerplus -q "site: ext:pdf confidential" -pdf -max 5 2>&1 | head -50
+
+
+
+
+
+
 # DorkPlus - Advanced Google Dorking & Screenshot Tool
 
 DorkPlus is a powerful command-line tool written in Go that combines Google dorking capabilities with automated screenshot capture. It allows you to search for sensitive information across the web and automatically capture visual evidence.
